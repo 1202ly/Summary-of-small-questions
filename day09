@@ -1,0 +1,141 @@
+#include<iostream>
+using namespace std;
+#include<stack>
+//面试题7：两个栈实现一个队列
+#if 0
+template<typename T> class CQueue
+{
+public:
+	CQueue()
+	{}
+	~CQueue()
+	{}
+	void appendTail(const T& node);
+	T deleteHead();
+private:
+	stack<T> stack1;
+	stack<T> stack2;
+};
+template<typename T> void CQueue<T>::appendTail(const T& node)
+{
+	stack1.push(node);//将元素先一个一个压入栈1
+}
+template<typename T> T CQueue<T>::deleteHead()
+{
+	if (stack2.empty())
+	{
+		while (!stack1.empty())
+		{
+			T topdata = stack1.top();
+			stack1.pop();
+			stack2.push(topdata);
+		}
+	}//将栈1中所有的元素压入栈2
+	if (stack2.empty())
+	{
+		cout << "stack2 error" << endl;
+	}
+	T head = stack2.top();
+	stack2.pop();
+	return head;
+}
+int main()
+{
+	CQueue<int> q;
+	q.appendTail(1);
+	q.appendTail(2);
+	q.deleteHead();
+	q.deleteHead();
+	system("pause");
+	return 0;
+}
+#endif
+//用两个队列实现一个栈 
+#include<queue>
+template<typename T> class CStack
+{
+public:
+	CStack()
+	{}
+	~CStack()
+	{}
+	void pushCStack(const T& node);
+	T popCStack();
+private:
+	queue<T> queue1;
+	queue<T> queue2;
+};
+template<typename T> void CStack<T>::pushCStack(const T& node)
+{
+	//边界处理
+	if (queue1.size() > 0 && queue2.size() > 0)
+	{
+		cout << "queue empty" << endl;
+	}
+	//插到非空队列中
+	if (queue2.empty())
+	{
+		queue1.push(node);
+	}
+	else
+	{
+		queue2.push(node);
+	}
+}
+template<typename T> T CStack<T>::popCStack()
+{
+	//边界考虑
+	if (queue1.empty() && queue2.empty())
+	{
+		cout << "queue error" << endl;
+	}
+	//如果队列2为空，队列1的元素大于1，那么就将队列1中的元素除最后一个压到队列2中，
+	T head=NULL;
+	if (!queue1.empty())
+	{
+		while (queue1.size() > 1)
+		{
+			T topdata = queue1.front();
+			queue1.pop();
+			queue2.push(topdata);
+		}
+		head = queue1.front();
+		queue1.pop();
+	}
+	else
+	{
+		while (queue2.size() > 1)
+		{
+			T topdata = queue2.front();
+			queue2.pop();
+			queue1.push(topdata);
+		}
+		head = queue2.front();
+		queue2.pop();
+	}
+	return head;
+}
+void Test(int actual,int expected)
+{
+	if (actual == expected)
+	{
+		cout << "Test passed" << endl;
+	}
+	else
+	{
+		cout << "Test unpassed" << endl;
+	}
+}
+int main()
+{
+	CStack<int> cs;
+	cs.pushCStack(1);
+	cs.pushCStack(2);
+	cs.pushCStack(3);
+	int actual = cs.popCStack();
+	Test(actual, 3);
+	int actual1 = cs.popCStack();
+	Test(actual1, 2);
+	system("pause");
+	return 0;
+}
